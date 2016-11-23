@@ -8,7 +8,19 @@ td{
     border: 1px solid red;
     height: 30px;
     width: 30px;
-    /*background-color: gray;*/
+    background-color: gray;
+}
+
+td.flag {
+    /*background-image: url("flag.png");*/
+    background-color: green;
+}
+td.mine {
+    /*background-image: url("flag.png");*/
+    background-color: red;
+}
+td.count {
+    text-color: black;
 }
 
 tr{ 
