@@ -5,6 +5,7 @@ arrSecond = new Array();
 var mineNum = 0;
 var arrTesting = new Array();
 var arrBlank = new Array();
+var curTime = 0;
 
 
 var Cell = {
@@ -76,7 +77,7 @@ var Game = {
         var arrRow;
         arrRow = new Array();
         var arrTest = new Array();
-
+       
         if(this.cells[i].count != 0 && this.cells[i].opened == false){
             $("#"+s+"").addClass('blank');
             this.cells[i].opened = true;
@@ -249,6 +250,11 @@ var Game = {
             $(this).addClass('mine');          
             self.die();
             alert("gg");
+            setTimeout(function () {
+               location.reload();
+            }, 1500);
+
+            
         }else {
             
             self.around();
@@ -315,10 +321,25 @@ var Game = {
             this.cells[bombs[i]].mine = true;
         }
     },
+
+   
+    time: function () {
+        self = Game;
+        // var curTime = new Date();
+        // $("#current-time").html(curTime.toLocaleString());
+        // setTimeout("self.time()", 1000);  
+         
+         curTime++;
+        $("#current-time").html(curTime);
+        setTimeout("self.time()", 1000);  
+        
+    },
+    
 };
 
 $(document).ready(function() {
     Game.init($('#mines'));
+    Game.time();
 });
 
 
