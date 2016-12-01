@@ -277,6 +277,10 @@ var Game = {
         
          if(mineNum == self.mine_count){
                 alert("Win");
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
+
             }
         return false;
     },
@@ -338,8 +342,12 @@ var Game = {
 };
 
 $(document).ready(function() {
+
+    $("#startbutton").click(function(){
+
     Game.init($('#mines'));
     Game.time();
+    })
 });
 
 
