@@ -36,7 +36,10 @@ tr{
 }
 
 .move{
-    background-color: green;
+    background-color: black;
+    color: black !important;
+    
+    
 }
 
 .DefaultTable{
@@ -44,3 +47,9 @@ tr{
 background-color: black;
 /*background-image: url("/home/yds/Bomb-yds/static/img/back.png");*/
 }
+
+.gamecontent{
+    width: 300px;
+    text-align: center;
+}
+

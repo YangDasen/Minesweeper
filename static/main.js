@@ -3,6 +3,8 @@ var arrSecond;
 arrFirst = new Array();
 arrSecond = new Array();
 var mineNum = 0;
+var arrTesting = new Array();
+var arrBlank = new Array();
 
 
 var Cell = {
@@ -48,12 +50,8 @@ var Game = {
             $(this).bind('click', self.cellClick);
             $(this).bind('contextmenu', self.cellRightClick);
             $(this).bind('mouseover',self.mouseOver);
-            //$(this).attr('id', index);
         });
-
-        // TODO: call in "start game" button click
         this.start();
-
          $("#reset").on("click",function () {
             location.reload();
          });
@@ -79,21 +77,18 @@ var Game = {
         arrRow = new Array();
         var arrTest = new Array();
 
-        if(this.cells[i].count != 0){
-            //console.log(this);
+        if(this.cells[i].count != 0 && this.cells[i].opened == false){
             $("#"+s+"").addClass('blank');
             this.cells[i].opened = true;
         }else
         if(this.cells[i].count ==0){
-            //self.openCol(i);
             $("#"+s+"").addClass('blank');
-            this.cells[i].opened = true;
-            //self.idArround(i);
-            //console.log(""+self.idArround(i)+"");
-            //self.turnArround(i);
-
+            this.cells[i].opened = true;          
             self.turnArroundNew(i);
                      
+        }else
+        if(this.cells[i].count != 0 && this.cells[i].opened == true){
+             
         }
     },
 
@@ -146,71 +141,37 @@ var Game = {
             } return arrFirst;            
         },
 
-
-    // turnArround:function(e){
-    //     var arrTested = new Array();
-        
-    //     for(var i=0; i<arrFirst.length;i++)
-    //             {
-    //                 if (this.cells[arrFirst[i]].count != 0 && this.cells[arrFirst[i]].opened == false && this.cells[arrFirst[i]].flag == false){
-    //                     this.cells[arrFirst[i]].opened = true;
-    //                     $("#"+arrSecond[i]+"").addClass('blank');
-                        
-    //                 } else
-    //                 if(this.cells[arrFirst[i]].count == 0 && this.cells[arrFirst[i]].opened == false && this.cells[arrFirst[i]].flag == false){
-    //                     arrTested.push(arrFirst[i]);
-    //                     //console.log(arrTested);
-    //                     $("#"+arrSecond[i]+"").addClass('blank');
-    //                 }
-                
-    //             }  
-    // },
-
    turnArroundNew: function(i){
        self = Game;
-       arrTest = new Array();
-       arrTesting = new Array();
-       arrTesting1 = new Array();
-       arrTesting2 = new Array();
+       if (arrTesting.length > 0) {
+        arrTesting.splice(0, 1);
+       }
        
-       arrTest = self.idArround(i);
-       for(var n = 0; n < arrTest.length; n++){
-           if(this.cells[arrTest[n]].count == 0 && this.cells[arrTest[n]].opened == false){
-               id = this.cells[arrTest[n]].y+"_"+this.cells[arrTest[n]].x;
-               $("#"+id+"").addClass('blank');
-               arrTesting.push(arrTest[n]);
-           }
-           if(this.cells[arrTest[n]].count != 0 && this.cells[arrTest[n]].opened == false){
-               id = this.cells[arrTest[n]].y+"_"+this.cells[arrTest[n]].x;
-               $("#"+id+"").addClass('blank');
+       var currentBlank = self.idArround(i);
+       for(var j = 0; j < currentBlank.length; j++) {
+           if ($.inArray(currentBlank[j], arrBlank) < 0) {
+               arrBlank.push(currentBlank[j]);
            }
        }
 
-       arrTemp = new Array();
-       arrTemp = [];
-       for(var m = 0; m < arrTesting.length; m++){
-            arrTemp[m] = self.idArround(arrTesting[m]);
-            for(var h = 0; h < arrTemp[m].length; h++){
-                if($.inArray(arrTemp[m][h],arrTest) < 0 && $.inArray(arrTemp[m][h],arrTesting) < 0 && $.inArray(arrTemp[m][h],arrTemp) < 0){
-                arrTesting1.push(arrTemp[m][h]);    
-                }
-            }
-            for(var x = 0; x < arrTesting1.length; x++){
-                 if(this.cells[arrTesting1[x]].count == 0 && this.cells[arrTesting1[x]].opened == false){
-                    var id1 = this.cells[arrTesting1[x]].y+"_"+this.cells[arrTesting1[x]].x;
-                    $("#"+id1+"").addClass('blank');
-                 }
+       for(var n = 0; n < currentBlank.length; n++){
+           if(this.cells[currentBlank[n]].count == 0 && this.cells[currentBlank[n]].opened == false){
+               id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
+               $("#"+id+"").addClass('blank');
+               this.cells[currentBlank[n]].opened = true;
 
-                 if(this.cells[arrTesting1[x]].count != 0 && this.cells[arrTesting1[x]].opened == false){
-                    var id1 = this.cells[arrTesting1[x]].y+"_"+this.cells[arrTesting1[x]].x;
-                    $("#"+id1+"").addClass('blank');
-                 }
-            }
+               arrTesting.push(currentBlank[n]);
+           }
+           if(this.cells[currentBlank[n]].count != 0 && this.cells[currentBlank[n]].opened == false){
+               id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
+               $("#"+id+"").addClass('blank');
+               this.cells[currentBlank[n]].opened = true;
+           }
        }
-       //console.log('1',arrTest);
-       //console.log('2',arrTesting);
-       //console.log('3',arrTemp);
-       //console.log('4',arrTesting1);
+
+       if (arrTesting.length > 0) {
+           self.turnArroundNew(arrTesting[0]);
+       }
    },
 
       
@@ -335,7 +296,6 @@ var Game = {
                 var i = (x-1)+(y-1)*h;//0-80
                 bombs[i] = i;
                 num++;
-                //console.log(i);
                 this.cells.push(Cell.createNew(y, x, num, false, 0));
                
                 //console.log(this.cells); //显示类
@@ -352,15 +312,8 @@ var Game = {
 
         shuffle(bombs);
         for (var i=0; i<this.mine_count; i++) {
-            //console.log('mine', bombs[i]);
-            //console.log('mine', bombs[i]+1);
             this.cells[bombs[i]].mine = true;
         }
-
-       
-        // TODO: 计算 count, flag
-
-        // TODO: interval 倒数
     },
 };
 
