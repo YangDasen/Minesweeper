@@ -147,24 +147,24 @@ var Game = {
         },
 
 
-    turnArround:function(e){
-        var arrTested = new Array();
+    // turnArround:function(e){
+    //     var arrTested = new Array();
         
-        for(var i=0; i<arrFirst.length;i++)
-                {
-                    if (this.cells[arrFirst[i]].count != 0 && this.cells[arrFirst[i]].opened == false && this.cells[arrFirst[i]].flag == false){
-                        this.cells[arrFirst[i]].opened = true;
-                        $("#"+arrSecond[i]+"").addClass('blank');
+    //     for(var i=0; i<arrFirst.length;i++)
+    //             {
+    //                 if (this.cells[arrFirst[i]].count != 0 && this.cells[arrFirst[i]].opened == false && this.cells[arrFirst[i]].flag == false){
+    //                     this.cells[arrFirst[i]].opened = true;
+    //                     $("#"+arrSecond[i]+"").addClass('blank');
                         
-                    } else
-                    if(this.cells[arrFirst[i]].count == 0 && this.cells[arrFirst[i]].opened == false && this.cells[arrFirst[i]].flag == false){
-                        arrTested.push(arrFirst[i]);
-                        //console.log(arrTested);
-                        $("#"+arrSecond[i]+"").addClass('blank');
-                    }
+    //                 } else
+    //                 if(this.cells[arrFirst[i]].count == 0 && this.cells[arrFirst[i]].opened == false && this.cells[arrFirst[i]].flag == false){
+    //                     arrTested.push(arrFirst[i]);
+    //                     //console.log(arrTested);
+    //                     $("#"+arrSecond[i]+"").addClass('blank');
+    //                 }
                 
-                }  
-    },
+    //             }  
+    // },
 
    turnArroundNew: function(i){
        self = Game;
@@ -174,8 +174,6 @@ var Game = {
        arrTesting2 = new Array();
        
        arrTest = self.idArround(i);
-
-
        for(var n = 0; n < arrTest.length; n++){
            if(this.cells[arrTest[n]].count == 0 && this.cells[arrTest[n]].opened == false){
                id = this.cells[arrTest[n]].y+"_"+this.cells[arrTest[n]].x;
@@ -197,25 +195,22 @@ var Game = {
                 arrTesting1.push(arrTemp[m][h]);    
                 }
             }
+            for(var x = 0; x < arrTesting1.length; x++){
+                 if(this.cells[arrTesting1[x]].count == 0 && this.cells[arrTesting1[x]].opened == false){
+                    var id1 = this.cells[arrTesting1[x]].y+"_"+this.cells[arrTesting1[x]].x;
+                    $("#"+id1+"").addClass('blank');
+                 }
+
+                 if(this.cells[arrTesting1[x]].count != 0 && this.cells[arrTesting1[x]].opened == false){
+                    var id1 = this.cells[arrTesting1[x]].y+"_"+this.cells[arrTesting1[x]].x;
+                    $("#"+id1+"").addClass('blank');
+                 }
+            }
        }
-       
-
-
-     
-
-
-
-
-
-
        //console.log('1',arrTest);
-       console.log('2',arrTesting);
+       //console.log('2',arrTesting);
        //console.log('3',arrTemp);
-       console.log('4',arrTesting1);
-    
-
-
-
+       //console.log('4',arrTesting1);
    },
 
       
