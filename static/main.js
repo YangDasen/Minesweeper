@@ -17,6 +17,7 @@ var Cell = {
             flag: false,     // 用户标记
             count: count,    // 周围雷数
             mine: mine,      // 自己是否是雷
+            ismine: 0,
             opened: false,
             toClassName: function() {
                 if (this.mine)
@@ -265,14 +266,22 @@ var Game = {
         var self = Game;
         var id = $(this).attr('id');
         var n = parseInt($(this).attr('name'));
-        //console.log(n);
-        //self.cells[id].flag = true;
-        $(this).addClass('flag');
-        //console.log(this.cells[5]);
-        self.cells[n].flag = true;
+        
+        switch (self.cells[n].flag){
+            case false: {
+                $(this).addClass('flag');
+                self.cells[n].flag = true;
+            } break;
+            case true: {
+                $(this).removeClass('flag');
+                self.cells[n].flag = false;
+            } break;
 
-        if(self.cells[n].flag == true && self.cells[n].mine == true){
+        }
+
+        if(self.cells[n].flag == true && self.cells[n].mine == true && self.cells[n].ismine == 0 ){
             mineNum++;
+            self.cells[n].ismine = 1;
         }
         
          if(mineNum == self.mine_count){

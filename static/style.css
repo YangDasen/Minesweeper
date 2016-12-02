@@ -1,4 +1,7 @@
 
+body{
+    text-align:center;
+}
 
 table{
      border: 1px solid red;
@@ -53,5 +56,6 @@ background-color: black;
 .gamecontent{
     width: 300px;
     text-align: center;
+    margin:0 auto;
 }
 
