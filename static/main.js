@@ -1,11 +1,13 @@
-var arrFirst;
-var arrSecond;
-arrFirst = new Array();
-arrSecond = new Array();
+
 var mineNum = 0;
 var arrTesting = new Array();
 var arrBlank = new Array();
 var curTime = 0;
+
+
+
+
+
 
 
 var Cell = {
@@ -20,8 +22,10 @@ var Cell = {
             ismine: 0,
             opened: false,
             toClassName: function() {
-                if (this.mine)
+                if (this.mine){
                     return "mine";
+                }
+                    
             }
         }
         return c;
@@ -38,12 +42,25 @@ function shuffle(a) {
     }
 }
 
+Array.prototype.removeByValue = function(val) {
+  for(var i = 0; i < this.length; i++) {
+    if(this[i] == val) {
+      this.splice(i, 1);
+      break;
+    }
+  }
+}
+
+
+
+
 var Game = {
     table: null,
     cells: null,
     mine_count: 9,
     w: 9,
     h: 9,
+    
     init: function (e) {
         this.table = e;
         var self = this;
@@ -52,106 +69,113 @@ var Game = {
             $(this).bind('click', self.cellClick);
             $(this).bind('contextmenu', self.cellRightClick);
             $(this).bind('mouseover',self.mouseOver);
-        });
+        });       
         this.start();
-         $("#reset").on("click",function () {
-            location.reload();
-         });
+        this.around();
+        //console.log("1",self.turnNumToId(80).x);
+        // $("#reset").on("click",function () {
+        //     location.reload();
+        // });
     },
 
 
+    turnNumToId: function (num) {
+        var m = Math.ceil(num / this.w);
+        var n = num - (m - 1) * this.w + 1;
+        var k = m + "_" + n;
+        return {x:m, y:n, id:k};
+    },
+
     die: function(){
-        for(var i=0; i<this.cells.length; i++) {
+        for(var i = 0; i < this.cells.length; i++) {
             if (this.cells[i].mine) {
-                $("[name= "+i+"]").addClass('mine');
-            } else {
-                if(this.cells[i].count)
-                    $('td#' + i).text(this.cells[i].count);
-                $('td#' + i).addClass('count');
+                $("[name= "+i+"]").addClass("mine");
             }
         }
     },
     
     open: function(i){
         self = this;
-        var s = this.cells[i].y+"_"+this.cells[i].x;
-        var arrRow;
-        arrRow = new Array();
-        var arrTest = new Array();
-       
         if(this.cells[i].count != 0 && this.cells[i].opened == false){
-            $("#"+s+"").addClass('blank');
+            $("[name= "+i+"]").addClass("blank");
+            $("[name= "+i+"]").find("span").addClass("count");
             this.cells[i].opened = true;
-        }else
-        if(this.cells[i].count ==0){
-            $("#"+s+"").addClass('blank');
+        }
+        else
+        if(this.cells[i].count == 0){
+            $("[name= "+i+"]").addClass("blank");
             this.cells[i].opened = true;          
-            self.turnArroundNew(i);
-                     
-        }else
-        if(this.cells[i].count != 0 && this.cells[i].opened == true){
-             
+            self.turnArround(i);
         }
     },
 
-     openCol: function(i){
-        var arrCol;
-        arrCol = new Array();
+    idRound : function(i){   //获取传入参数周围8个点的坐标     
+        
+        var arrAroundId;
+        arrAroundId = new Array();             
+        self = this;
+        var leftRow = this.cells[i].y - 1; 
+        var rightRow = this.cells[i].y + 1;
+        var leftCol = this.cells[i].x - 1; 
+        var rightCol = this.cells[i].x + 1; 
+        arrAroundId = [];
+
+        
+        if(leftRow < 1) leftRow= 1;
+        if(rightRow >= this.w) rightRow = this.w;    
+        if(leftCol < 1) leftCol = 1;       
+        if(rightCol >= this.h) rightCol = this.h;
+
+        for(var m = leftRow; m <= rightRow; m++){
+            for(var j = leftCol; j <= rightCol; j++){
+                var numId = m.toString() + "_" + j.toString();
+                var s = $("#"+numId+"").attr("name");
+
+                arrAroundId.push(s);
+                console.log(arrAroundId);                                     
+            }
+        } 
+            return arrAroundId;            
+    },
+
+    // idRound : function(i){   //获取传入参数周围8个点的坐标     
             
-         for(var j=0;j<=this.w-this.cells[i].y;j++){
-                    var s1 = this.cells[i].y+j+"_"+this.cells[i].x;//向下遍历
-                    arrCol.push(s1);
-                    if($("#"+s1+"").text() != ""){
-                    break;
-                    }
+    //         var arrAroundId;
+    //         arrAroundId = new Array();             
+    //         self = this;
+    //         var leftRow = parseInt(i / this.w); 
+    //         var rightRow = parseInt(i / this.w) + 2;
+    //         var leftCol = i - parseInt(i / this.w) * this.w; 
+    //         var rightCol = i - parseInt(i / this.w) * this.w + 2; 
+    //         arrAroundId = [];
 
-                }
-                for(var x=1;x<this.cells[i].y;x++){
-                     var s2 = this.cells[i].y-x+"_"+this.cells[i].x;//向上遍历
-                     arrCol.push(s2);
-                     if($("#"+s2+"").text() != ""){
-                        break;
-                    }
-                }console.log(arrCol);   
-                for (var n = 0; n < arrCol.length; n++)
-                {
-                    $("#"+arrCol[n]+"").addClass('blank');
-                }             
+            
+    //         if(leftRow < 1) leftRow= 1;
+    //         if(rightRow >= this.w) rightRow = this.w;    
+    //         if(leftCol < 1) leftCol = 1;       
+    //         if(rightCol >= this.h) rightCol = this.h;
+
+    //         for(var m = leftRow; m <= rightRow; m++){
+    //             for(var j = leftCol; j <= rightCol; j++){
+    //                 var numId = m.toString() + "_" + j.toString();
+    //                 var s = $("#"+numId+"").attr("name");
+    //                 arrAroundId.push(s);
+    //                 console.log(arrAroundId);                                     
+    //             }
+    //         } 
+    //             return arrAroundId;            
+    //     },
 
 
-        },
-
-        idArround: function(i){   //获取传入参数周围8个点的坐标                   
-            var leftRow = 1;
-            var rightRow = 1; 
-            var leftCol = 1;
-            var rightCol = 1;
-            arrSecond = [];
-            arrFirst = [];
-            id = this.cells[i].y+"_"+this.cells[i].x;
-            leftRow = this.cells[i].y - 1; if(leftRow < 1) leftRow= 1;
-            rightRow = this.cells[i].y + 1;if(rightRow >= this.w) rightRow = this.w;
-            leftCol = this.cells[i].x - 1; if(leftCol < 1) leftCol = 1;
-            rightCol = this.cells[i].x + 1; if(rightCol >= this.h) rightCol = this.h;
-            for(var m = leftRow; m <= rightRow; m++){
-                for(var j = leftCol; j <= rightCol; j++){
-                    var numId = m.toString() + "_" + j.toString();
-                    var s = $("#"+numId+"").attr("name");
-                    arrSecond.push(numId);
-                    arrFirst.push(s);                                     
-                }
-            } return arrFirst;            
-        },
-
-   turnArroundNew: function(i){
+   turnArround: function(i){
        self = Game;
        if (arrTesting.length > 0) {
         arrTesting.splice(0, 1);
        }
        
-       var currentBlank = self.idArround(i);
+       var currentBlank = self.idRound(i);
        for(var j = 0; j < currentBlank.length; j++) {
-           if ($.inArray(currentBlank[j], arrBlank) < 0) {
+           if ($.inArray(currentBlank[j], arrBlank) < 0){
                arrBlank.push(currentBlank[j]);
            }
        }
@@ -160,108 +184,155 @@ var Game = {
            if(this.cells[currentBlank[n]].count == 0 && this.cells[currentBlank[n]].opened == false){
                id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
                $("#"+id+"").addClass('blank');
+               $("#"+id+"").find("span").addClass("count");
                this.cells[currentBlank[n]].opened = true;
-
                arrTesting.push(currentBlank[n]);
            }
            if(this.cells[currentBlank[n]].count != 0 && this.cells[currentBlank[n]].opened == false){
                id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
                $("#"+id+"").addClass('blank');
+               $("#"+id+"").find("span").addClass("count");
                this.cells[currentBlank[n]].opened = true;
            }
        }
 
        if (arrTesting.length > 0) {
-           self.turnArroundNew(arrTesting[0]);
+           self.turnArround(arrTesting[0]);
        }
    },
 
       
-    around: function() {
+    // around: function() {
         
-        $("td").addClass("hide");
-        var leftRow = 1;
-        var rightRow = 1; 
-        var leftCol = 1;
-        var rightCol = 1;
+    //     $("td").addClass("hide");
+    //     var leftRow = 1;
+    //     var rightRow = 1; 
+    //     var leftCol = 1;
+    //     var rightCol = 1;
+    //     var arrAround;
+    //     arrAround = new Array();
+    //     var arrNew;
+    //     arrNew = new Array();
+    //     var arrMap;
+    //     arrMap = new Array();
+    //     var arrcountNum;
+    //     arrcountNum = new Array();
+    //     var countNum = 0;
+
+    //     for (var n = 0; n < this.cells.length; n++) {
+    //                 if(this.cells[n].mine == true){
+    //                     id = this.cells[n].y+"_"+this.cells[n].x;
+    //                     arrMap.push(id);
+    //                 } 
+    //         }
+
+    //         for (var i = 0; i < arrMap.length; i++){
+    //             var r = parseInt(arrMap[i].split("_")[0]);
+    //             var c = parseInt(arrMap[i].split("_")[1]);
+    //             leftRow = r - 1; if(leftRow < 1) leftRow= 1;
+    //             rightRow = r + 1;if(rightRow >= this.w) rightRow = this.w;
+    //             leftCol = c - 1; if(leftCol < 1) leftCol = 1;
+    //             rightCol = c + 1; if(rightCol >= this.h) rightCol = this.h;
+    //             for(var m = leftRow; m <= rightRow; m++){
+    //                 for(var j = leftCol; j <= rightCol; j++){
+    //                     var numId = m.toString() + "_" + j.toString();
+    //                      if($.inArray(numId,arrMap) < 0){
+    //                         arrAround.push(numId); 
+    //                      }      
+    //                 }
+    //             } 
+    //         }              
+    //         for(var w= 0; w<arrAround.length; w++){
+    //             arrNew[w]=arrAround[w];
+    //         }
+    //         for(var p=0; p< arrNew.length; p++){
+    //             if(arrNew[p]!=-1){
+    //                 temp = arrNew[p];
+    //                 for(var m=0; m< arrNew.length; m++){
+    //                     if(temp == arrNew[m]){
+    //                         countNum++;
+    //                         arrNew[m]=-1;
+    //                     }
+    //                 }                
+    //                 $("[id= "+arrAround[p]+"]").html(""+countNum+""); 
+    //                 arrcountNum.push(countNum);
+    //                 countNum = 0;
+    //             }
+    //         }        
+    //         for (i=0; i< this.cells.length; i++){
+    //             s = this.cells[i].y+"_"+this.cells[i].x;
+    //             if (c = $("#"+s+"").text()> 0){
+    //                 this.cells[i].count = parseInt($("#"+s+"").text());                 
+    //             }
+    //         }
+    // },
+       
+
+    around: function() {
+        self = Game;
         var arrAround;
+        var arrNew;
+        var arrBombMap;
+        var arrcountNum;
+        var countNum = 0;
         arrAround = new Array();
-        var arrNew = new Array();
-        var arrMap = new Array();//新建一个数据用来存放循环后的数据
-        var arrcountNum = new Array();
-        var countNum = 0;//循环时用来存储数组中的某个元素出现的次数
+        arrNew = new Array();
+        arrBombMap = new Array();
+        arrcountNum = new Array();
 
         for (var n = 0; n < this.cells.length; n++) {
-                    if(this.cells[n].mine == true){
-                        id = this.cells[n].y+"_"+this.cells[n].x;
-                        arrMap.push(id);
-                    } 
-            }
+            if(this.cells[n].mine == true){
+                arrBombMap.push(n);
+            } 
+        }
 
-            for (var i = 0; i < arrMap.length; i++){
-                var r = parseInt(arrMap[i].split("_")[0]);
-                var c = parseInt(arrMap[i].split("_")[1]);
-                leftRow = r - 1; if(leftRow < 1) leftRow= 1;
-                rightRow = r + 1;if(rightRow >= this.w) rightRow = this.w;
-                leftCol = c - 1; if(leftCol < 1) leftCol = 1;
-                rightCol = c + 1; if(rightCol >= this.h) rightCol = this.h;
-                for(var m = leftRow; m <= rightRow; m++){
-                    for(var j = leftCol; j <= rightCol; j++){
-                        var numId = m.toString() + "_" + j.toString();
-                         if($.inArray(numId,arrMap) < 0){
-                            arrAround.push(numId); 
-                         }
-                         
+        for (var i = 0; i < arrBombMap.length; i++){   
+            arrAround = arrAround.concat(self.idRound(arrBombMap[i]));                              
+        }           
+
+        for(var w= 0; w<arrAround.length; w++){
+            arrNew[w]=arrAround[w];
+        }
+
+        for(var p=0; p< arrNew.length; p++){
+            if(arrNew[p]!=-1){
+                temp = arrNew[p];
+                for(var m=0; m< arrNew.length; m++){
+                    if(temp == arrNew[m]){
+                        countNum++;
+                        arrNew[m]=-1;
                     }
-                } //console.log(arrAround);
-            }              
-            for(var w= 0; w<arrAround.length; w++){
-                arrNew[w]=arrAround[w];
-            }
-            for(var p=0; p< arrNew.length; p++){
-                if(arrNew[p]!=-1){
-                    temp = arrNew[p];
-                    for(var m=0; m< arrNew.length; m++){
-                        if(temp == arrNew[m]){
-                            countNum++;
-                            arrNew[m]=-1;
-                        }
-                    }                
-                    $("[id= "+arrAround[p]+"]").html(""+countNum+""); 
+                }                
+                    $("[name= "+arrAround[p]+"]").html("<span>"+countNum+"</span>"); 
                     arrcountNum.push(countNum);
-                    //console.log(arrcountNum);
                     countNum = 0;
-                }
-            }        
-            for (i=0; i< this.cells.length; i++){
-                s = this.cells[i].y+"_"+this.cells[i].x;
-                //console.log(s);
-                if (c = $("#"+s+"").text()> 0){
-                    this.cells[i].count = parseInt($("#"+s+"").text());                 
-                }
             }
+        }       
+         
+        for (i=0; i< this.cells.length; i++){
+            s = this.cells[i].y+"_"+this.cells[i].x;
+            if (c = $("#"+s+"").text()> 0){
+                this.cells[i].count = parseInt($("#"+s+"").text());                 
+            }
+        }
+
+        $("td span").addClass("cover");
     },
-       
+
 
     cellClick: function(e) {
         var self = Game;
-        var id = $(this).attr('name');//获取id
+        var id = $(this).attr('name');
 
         if(self.cells[id].mine) {
             $(this).addClass('mine');          
             self.die();
-            alert("gg");
-            setTimeout(function () {
-               location.reload();
-            }, 1500);
-
-            
-        }else {
-            
-            self.around();
+            $("#gameTitle").replaceWith("<legend>你输了</legend>");  
+        }else{
             self.open(id);
         }
     },
+
     cellRightClick: function(e) {
         var self = Game;
         var id = $(this).attr('id');
@@ -271,12 +342,13 @@ var Game = {
             case false: {
                 $(this).addClass('flag');
                 self.cells[n].flag = true;
-            } break;
+            } 
+            break;
             case true: {
                 $(this).removeClass('flag');
                 self.cells[n].flag = false;
-            } break;
-
+            } 
+            break;
         }
 
         if(self.cells[n].flag == true && self.cells[n].mine == true && self.cells[n].ismine == 0 ){
@@ -290,7 +362,7 @@ var Game = {
                     location.reload();
                 }, 1500);
 
-            }
+        }
         return false;
     },
 
@@ -303,21 +375,19 @@ var Game = {
         });
     },
 
-    start: function () {  //开始
+    start: function () {  
         this.cells = new Array();
         var w = this.w, h = this.h;
         var num = -1;
-
-        var bombs = new Array(w * h);//数组长度
+        var bombs = new Array(w * h);
 
         for (var x=1; x<=w; x++) {
             for (var y=1; y<=h; y++) {
-                var i = (x-1)+(y-1)*h;//0-80
+                var i = (x-1)+(y-1)*h;
                 bombs[i] = i;
                 num++;
-                this.cells.push(Cell.createNew(y, x, num, false, 0));
-               
-                //console.log(this.cells); //显示类
+                this.cells.push(Cell.createNew(y, x, num, false, 0));           
+               // console.log(this.cells); //显示类
             }
         } 
         
@@ -338,25 +408,22 @@ var Game = {
    
     time: function () {
         self = Game;
-        // var curTime = new Date();
-        // $("#current-time").html(curTime.toLocaleString());
-        // setTimeout("self.time()", 1000);  
-         
-         curTime++;
+        curTime++;
         $("#current-time").html(curTime);
-        setTimeout("self.time()", 1000);  
-        
-    },
-    
+        setTimeout("self.time()", 1000);         
+    },  
 };
 
 $(document).ready(function() {
-
-    $("#startbutton").click(function(){
-
-    Game.init($('#mines'));
-    Game.time();
+    $("#startbutton").click(function(){ 
+        Game.init($('#mines'));
+        Game.time();
     })
+
+    $("#resetbutton").click(function(){ 
+    return Game.init($('#mines'));
+    })
+
 });
 
 

@@ -10,30 +10,34 @@ table{
 }
 
 td{ 
-    border: 1px solid red;
+    border: 1px solid gray;
     height: 30px;
     width: 30px;
-    background-color: gray;
+    /*background-color: gray;*/
+    background-image: url("img/back.png")
 }
 
-td.hide{
-    color:gray;
+.cover{   
+    color: red;
+    opacity: 0; 
 }
 
 td.flag {
     /*background-image: url("flag.png");*/
-    background-color: green;
+    background-image: url("img/mark1.png")
+ 
 }
 td.mine {
-    /*background-image: url("flag.png");*/
-    background-color: red;
+    background-image: url("img/bomb.png")
 }
 td.count {
     color:red;
 }
 
 td.blank{
-     background-color: white;
+     /*background-color: white;*/
+     background-image: url("img/back2.png")
+      
 }
 
 tr{ 
@@ -41,9 +45,9 @@ tr{
 }
 
 .move{
-    background-color: black;
-    color: black !important;
-    
+    /*background-color: black;
+    color: black !important;*/
+     background-image: url("img/back2.png")
     
 }
 
@@ -59,3 +63,6 @@ background-color: black;
     margin:0 auto;
 }
 
+.count{
+    opacity:1;
+}
