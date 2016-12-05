@@ -54,6 +54,10 @@ var Game = {
         });       
         this.start();
         this.around();
+
+        for (var i=0; i<this.w*this.h; i++) {
+            console.log(i, this.idRound(i));
+        }
     },
 
     die: function(){
@@ -79,7 +83,23 @@ var Game = {
         }
     },
 
-    idRound : function(i){      
+    idRound : function(i){
+        // i = index
+        var irow = i / this.w;
+        var icol = i % this.h;
+        var self = this;
+        return [
+            i-1, // left
+            i+1, // right
+            i-this.w, // up 
+            i+this.w, // down
+            i-this.w+1, // up right
+            i-this.w-1, // up left
+            i+this.w-1, // down left
+            i+this.w+1 // down right
+            ].filter(function(x) {
+            return x>=0 && x < self.w * self.h && (x / self.w != irow && x % self.h != icol);
+        });
         var arrAroundId;
         arrAroundId = new Array();             
         self = this;
