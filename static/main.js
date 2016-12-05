@@ -32,14 +32,6 @@ function shuffle(a) {
     }
 }
 
-Array.prototype.removeByValue = function(val) {
-  for(var i = 0; i < this.length; i++) {
-    if(this[i] == val) {
-      this.splice(i, 1);
-      break;
-    }
-  }
-}
 
 var Game = {
     table: null,
@@ -62,14 +54,6 @@ var Game = {
         });       
         this.start();
         this.around();
-    },
-
-
-    turnNumToId: function (num) {
-        var m = Math.ceil(num / this.w);
-        var n = num - (m - 1) * this.w + 1;
-        var k = m + "_" + n;
-        return {x:m, y:n, id:k};
     },
 
     die: function(){
@@ -335,10 +319,6 @@ var Game = {
 
 
 };
-
-
-
-
 
 
 $(document).ready(function() {
