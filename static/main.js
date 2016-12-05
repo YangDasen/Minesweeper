@@ -1,14 +1,5 @@
-
-var mineNum = 0;
 var arrTesting = new Array();
 var arrBlank = new Array();
-var curTime = 0;
-
-
-
-
-
-
 
 var Cell = {
     createNew: function(x, y, num, mine, count) {
@@ -16,10 +7,9 @@ var Cell = {
             x: x,
             y: y,
             num: num,
-            flag: false,     // 用户标记
-            count: count,    // 周围雷数
-            mine: mine,      // 自己是否是雷
-            ismine: 0,
+            flag: false,    
+            count: count,    
+            mine: mine,      
             opened: false,
             toClassName: function() {
                 if (this.mine){
@@ -51,20 +41,20 @@ Array.prototype.removeByValue = function(val) {
   }
 }
 
-
-
-
 var Game = {
     table: null,
     cells: null,
     mine_count: 9,
+    time_count: 0,
     w: 9,
     h: 9,
+    timeID: 0,
+    
     
     init: function (e) {
         this.table = e;
-        var self = this;
-        
+        var self = this;  
+        Game.timeID = setInterval("Game.timeCount()",1000), 
         this.table.find("td").each(function (index, e){
             $(this).bind('click', self.cellClick);
             $(this).bind('contextmenu', self.cellRightClick);
@@ -72,10 +62,6 @@ var Game = {
         });       
         this.start();
         this.around();
-        //console.log("1",self.turnNumToId(80).x);
-        // $("#reset").on("click",function () {
-        //     location.reload();
-        // });
     },
 
 
@@ -109,8 +95,7 @@ var Game = {
         }
     },
 
-    idRound : function(i){   //获取传入参数周围8个点的坐标     
-        
+    idRound : function(i){      
         var arrAroundId;
         arrAroundId = new Array();             
         self = this;
@@ -132,40 +117,11 @@ var Game = {
                 var s = $("#"+numId+"").attr("name");
 
                 arrAroundId.push(s);
-                console.log(arrAroundId);                                     
+                                                    
             }
         } 
             return arrAroundId;            
     },
-
-    // idRound : function(i){   //获取传入参数周围8个点的坐标     
-            
-    //         var arrAroundId;
-    //         arrAroundId = new Array();             
-    //         self = this;
-    //         var leftRow = parseInt(i / this.w); 
-    //         var rightRow = parseInt(i / this.w) + 2;
-    //         var leftCol = i - parseInt(i / this.w) * this.w; 
-    //         var rightCol = i - parseInt(i / this.w) * this.w + 2; 
-    //         arrAroundId = [];
-
-            
-    //         if(leftRow < 1) leftRow= 1;
-    //         if(rightRow >= this.w) rightRow = this.w;    
-    //         if(leftCol < 1) leftCol = 1;       
-    //         if(rightCol >= this.h) rightCol = this.h;
-
-    //         for(var m = leftRow; m <= rightRow; m++){
-    //             for(var j = leftCol; j <= rightCol; j++){
-    //                 var numId = m.toString() + "_" + j.toString();
-    //                 var s = $("#"+numId+"").attr("name");
-    //                 arrAroundId.push(s);
-    //                 console.log(arrAroundId);                                     
-    //             }
-    //         } 
-    //             return arrAroundId;            
-    //     },
-
 
    turnArround: function(i){
        self = Game;
@@ -200,73 +156,6 @@ var Game = {
            self.turnArround(arrTesting[0]);
        }
    },
-
-      
-    // around: function() {
-        
-    //     $("td").addClass("hide");
-    //     var leftRow = 1;
-    //     var rightRow = 1; 
-    //     var leftCol = 1;
-    //     var rightCol = 1;
-    //     var arrAround;
-    //     arrAround = new Array();
-    //     var arrNew;
-    //     arrNew = new Array();
-    //     var arrMap;
-    //     arrMap = new Array();
-    //     var arrcountNum;
-    //     arrcountNum = new Array();
-    //     var countNum = 0;
-
-    //     for (var n = 0; n < this.cells.length; n++) {
-    //                 if(this.cells[n].mine == true){
-    //                     id = this.cells[n].y+"_"+this.cells[n].x;
-    //                     arrMap.push(id);
-    //                 } 
-    //         }
-
-    //         for (var i = 0; i < arrMap.length; i++){
-    //             var r = parseInt(arrMap[i].split("_")[0]);
-    //             var c = parseInt(arrMap[i].split("_")[1]);
-    //             leftRow = r - 1; if(leftRow < 1) leftRow= 1;
-    //             rightRow = r + 1;if(rightRow >= this.w) rightRow = this.w;
-    //             leftCol = c - 1; if(leftCol < 1) leftCol = 1;
-    //             rightCol = c + 1; if(rightCol >= this.h) rightCol = this.h;
-    //             for(var m = leftRow; m <= rightRow; m++){
-    //                 for(var j = leftCol; j <= rightCol; j++){
-    //                     var numId = m.toString() + "_" + j.toString();
-    //                      if($.inArray(numId,arrMap) < 0){
-    //                         arrAround.push(numId); 
-    //                      }      
-    //                 }
-    //             } 
-    //         }              
-    //         for(var w= 0; w<arrAround.length; w++){
-    //             arrNew[w]=arrAround[w];
-    //         }
-    //         for(var p=0; p< arrNew.length; p++){
-    //             if(arrNew[p]!=-1){
-    //                 temp = arrNew[p];
-    //                 for(var m=0; m< arrNew.length; m++){
-    //                     if(temp == arrNew[m]){
-    //                         countNum++;
-    //                         arrNew[m]=-1;
-    //                     }
-    //                 }                
-    //                 $("[id= "+arrAround[p]+"]").html(""+countNum+""); 
-    //                 arrcountNum.push(countNum);
-    //                 countNum = 0;
-    //             }
-    //         }        
-    //         for (i=0; i< this.cells.length; i++){
-    //             s = this.cells[i].y+"_"+this.cells[i].x;
-    //             if (c = $("#"+s+"").text()> 0){
-    //                 this.cells[i].count = parseInt($("#"+s+"").text());                 
-    //             }
-    //         }
-    // },
-       
 
     around: function() {
         self = Game;
@@ -327,7 +216,10 @@ var Game = {
         if(self.cells[id].mine) {
             $(this).addClass('mine');          
             self.die();
-            $("#gameTitle").replaceWith("<legend>你输了</legend>");  
+            self.mine_count = 0;
+            clearInterval(self.timeID);
+            $("#gameTitle").replaceWith("<legend id =gameTitle >你输了</legend>");  
+            
         }else{
             self.open(id);
         }
@@ -351,20 +243,29 @@ var Game = {
             break;
         }
 
-        if(self.cells[n].flag == true && self.cells[n].mine == true && self.cells[n].ismine == 0 ){
-            mineNum++;
-            self.cells[n].ismine = 1;
+        if(self.cells[n].flag == true && self.cells[n].mine == true && self.cells[n].opened == false){
+            self.cells[n].opened = true;
+            self.mine_count --;
+            
         }
         
-         if(mineNum == self.mine_count){
-                alert("Win");
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-
+         if(self.mine_count == 0 && self.win() == true){
+            $("#gameTitle").replaceWith("<legend id =gameTitle>你赢了</legend>");  
+            clearInterval(self.timeID);
         }
         return false;
     },
+
+    
+    win: function () { 
+        for (var i = 0; i < this.cells.length; i++){
+            if (this.cells[i].opened == true){
+                return true;
+            }
+            return false;
+        }
+     },
+
 
     mouseOver: function(e){
         $("td").mouseover(function(){
@@ -405,25 +306,48 @@ var Game = {
         }
     },
 
-   
-    time: function () {
-        self = Game;
-        curTime++;
-        $("#current-time").html(curTime);
-        setTimeout("self.time()", 1000);         
-    },  
+
+    gameReSet: function(){
+       $("td").removeClass("blank");
+       $("td").removeClass("flag");
+       $("td").removeClass("mine");
+       $("td span").removeClass("count");
+       $("td span").remove(); 
+        Game.table = null;
+        Game.cells = null;
+        Game.mine_count = 9;
+        Game.time_count = 0;
+        arrTesting = [];
+        arrBlank = [];
+        Game.timeID = 0;      
+       
+        $("#gameTitle").replaceWith("<legend id =gameTitle>扫雷</legend>");  
+
+        Game.init($('#mines'));
+       
+    },
+
+    timeCount: function () {
+        document.getElementById("timetxt").value = this.time_count;
+        this.time_count ++;
+    },
+
+
+
 };
+
+
+
+
+
 
 $(document).ready(function() {
     $("#startbutton").click(function(){ 
         Game.init($('#mines'));
-        Game.time();
     })
-
     $("#resetbutton").click(function(){ 
-    return Game.init($('#mines'));
+        Game.gameReSet();
     })
-
 });
 
 
