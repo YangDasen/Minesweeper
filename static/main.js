@@ -321,7 +321,7 @@ var Game = {
 
 
     gameReSet: function(){
-
+        clearInterval(self.timeID);
         $("td").removeClass("blank");
         $("td").removeClass("flag");
         $("td").removeClass("mine");
