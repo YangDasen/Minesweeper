@@ -85,46 +85,69 @@ var Game = {
 
     idRound : function(i){
         // i = index
-        var irow = i / this.w;
-        var icol = i % this.h;
+        var irow = (i % this.h) + 1;
+        var icol = parseInt(i / this.w) + 1;
         var self = this;
-        return [
-            i-1, // left
-            i+1, // right
-            i-this.w, // up 
-            i+this.w, // down
-            i-this.w+1, // up right
-            i-this.w-1, // up left
-            i+this.w-1, // down left
-            i+this.w+1 // down right
-            ].filter(function(x) {
-            return x>=0 && x < self.w * self.h && (x / self.w != irow && x % self.h != icol);
-        });
-        var arrAroundId;
-        arrAroundId = new Array();             
-        self = this;
-        var leftRow = this.cells[i].y - 1; 
-        var rightRow = this.cells[i].y + 1;
-        var leftCol = this.cells[i].x - 1; 
-        var rightCol = this.cells[i].x + 1; 
-        arrAroundId = [];
+
+        if(i % this.w == 0){
+            return [ 
+                i,
+                i-this.w,
+                i-this.w+1,
+                i+1,
+                i+this.w,
+                i+this.w+1
+                ].filter(function(x){return x>=0 && x < self.w * self.h});
+        }else 
+        if(i % this.w == this.w - 1){
+            return [
+                i,
+                i-this.w-1,
+                i-this.w,i-1,
+                i+this.w-1,
+                i+this.w,
+                ].filter(function(x){return x>=0 && x < self.w * self.h});
+        }else{
+            return [
+                i,
+                i-1, // left
+                i+1, // right
+                i-this.w, // up 
+                i+this.w, // down
+                i-this.w+1, // up right
+                i-this.w-1, // up left
+                i+this.w-1, // down left
+                i+this.w+1 // down right
+                ].filter(function(x){return x>=0 && x < self.w * self.h});
+        }
+
+
+
+        // var arrAroundId;
+        // arrAroundId = new Array();             
+        // self = this;
+        // var leftRow = this.cells[i].y - 1; 
+        // var rightRow = this.cells[i].y + 1;
+        // var leftCol = this.cells[i].x - 1; 
+        // var rightCol = this.cells[i].x + 1; 
+        // arrAroundId = [];
 
         
-        if(leftRow < 1) leftRow= 1;
-        if(rightRow >= this.w) rightRow = this.w;    
-        if(leftCol < 1) leftCol = 1;       
-        if(rightCol >= this.h) rightCol = this.h;
+        // if(leftRow < 1) leftRow= 1;
+        // if(rightRow >= this.w) rightRow = this.w;    
+        // if(leftCol < 1) leftCol = 1;       
+        // if(rightCol >= this.h) rightCol = this.h;
 
-        for(var m = leftRow; m <= rightRow; m++){
-            for(var j = leftCol; j <= rightCol; j++){
-                var numId = m.toString() + "_" + j.toString();
-                var s = $("#"+numId+"").attr("name");
+        // for(var m = leftRow; m <= rightRow; m++){
+        //     for(var j = leftCol; j <= rightCol; j++){
+        //         var numId = m.toString() + "_" + j.toString();
+        //         var s = $("#"+numId+"").attr("name");
 
-                arrAroundId.push(s);
+        //         arrAroundId.push(s);
                                                     
-            }
-        } 
-            return arrAroundId;            
+        //     }
+        // } 
+        //     return arrAroundId;            
     },
 
    turnArround: function(i){
@@ -142,16 +165,23 @@ var Game = {
 
        for(var n = 0; n < currentBlank.length; n++){
            if(this.cells[currentBlank[n]].count == 0 && this.cells[currentBlank[n]].opened == false){
-               id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
-               $("#"+id+"").addClass('blank');
-               $("#"+id+"").find("span").addClass("count");
+               $("[name= "+currentBlank[n]+"]").addClass('blank');
+               $("[name= "+currentBlank[n]+"]").find("span").addClass("count");
+
+            //    id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
+            //    $("#"+id+"").addClass('blank');
+            //    $("#"+id+"").find("span").addClass("count");
                this.cells[currentBlank[n]].opened = true;
                arrTesting.push(currentBlank[n]);
            }
            if(this.cells[currentBlank[n]].count != 0 && this.cells[currentBlank[n]].opened == false){
-               id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
-               $("#"+id+"").addClass('blank');
-               $("#"+id+"").find("span").addClass("count");
+               
+               $("[name= "+currentBlank[n]+"]").addClass('blank');
+               $("[name= "+currentBlank[n]+"]").find("span").addClass("count");
+               
+            //    id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
+            //    $("#"+id+"").addClass('blank');
+            //    $("#"+id+"").find("span").addClass("count");
                this.cells[currentBlank[n]].opened = true;
            }
        }
