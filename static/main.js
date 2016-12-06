@@ -2,10 +2,8 @@ var arrTesting = new Array();
 var arrBlank = new Array();
 
 var Cell = {
-    createNew: function(x, y, num, mine, count) {
+    createNew: function(num, mine, count) {
         var c = {
-            x: x,
-            y: y,
             num: num,
             flag: false,    
             count: count,    
@@ -14,8 +12,7 @@ var Cell = {
             toClassName: function() {
                 if (this.mine){
                     return "mine";
-                }
-                    
+                }   
             }
         }
         return c;
@@ -30,6 +27,10 @@ function shuffle(a) {
         a[i - 1] = a[j];
         a[j] = x;
     }
+}
+
+function sortNumber(a,b){
+    return a - b;
 }
 
 
@@ -47,6 +48,9 @@ var Game = {
         this.table = e;
         var self = this;  
         Game.timeID = setInterval("Game.timeCount()",1000), 
+        $("#startbutton").val("重置");
+        $("#startbutton").attr("id","resetbutton");
+        
         this.table.find("td").each(function (index, e){
             $(this).bind('click', self.cellClick);
             $(this).bind('contextmenu', self.cellRightClick);
@@ -54,10 +58,6 @@ var Game = {
         });       
         this.start();
         this.around();
-
-        for (var i=0; i<this.w*this.h; i++) {
-            console.log(i, this.idRound(i));
-        }
     },
 
     die: function(){
@@ -84,79 +84,68 @@ var Game = {
     },
 
     idRound : function(i){
-        // i = index
-        var irow = (i % this.h) + 1;
-        var icol = parseInt(i / this.w) + 1;
         var self = this;
+        var i = parseInt(i);
+        var arr1 = new Array();
+        var arr2 = new Array();
+        var arr3 = new Array();
+
+        arr1 = [];
+        arr2 = [];
+        arr3 = [];
 
         if(i % this.w == 0){
-            return [ 
+            
+            arr1 = [ 
                 i,
                 i-this.w,
                 i-this.w+1,
                 i+1,
                 i+this.w,
                 i+this.w+1
-                ].filter(function(x){return x>=0 && x < self.w * self.h});
+                ].filter(function(x){return x>=0 && x < self.w * self.h}).sort(sortNumber);
+                arr1 = arr1.map(function (val) { return val.toString();})
+                return arr1;
         }else 
         if(i % this.w == this.w - 1){
-            return [
+            arr2 = [
                 i,
                 i-this.w-1,
                 i-this.w,i-1,
                 i+this.w-1,
                 i+this.w,
-                ].filter(function(x){return x>=0 && x < self.w * self.h});
+                ].filter(function(x){return x>=0 && x < self.w * self.h}).sort(sortNumber);
+                arr2 = arr2.map(function (val) { return val.toString();})
+                return arr2;
+
         }else{
-            return [
+            arr3 = [
                 i,
                 i-1, // left
                 i+1, // right
-                i-this.w, // up 
-                i+this.w, // down
-                i-this.w+1, // up right
-                i-this.w-1, // up left
-                i+this.w-1, // down left
-                i+this.w+1 // down right
-                ].filter(function(x){return x>=0 && x < self.w * self.h});
+                i-self.w, // up 
+                i+self.w, // down
+                i-self.w+1, // up right
+                i-self.w-1, // up left
+                i+self.w-1, // down left
+                i+self.w+1 // down right
+                ].filter(function(x){return x>=0 && x < self.w * self.h}).sort(sortNumber);
+                arr3 = arr3.map(function (val) { return val.toString();})
+                return arr3;
         }
 
-
-
-        // var arrAroundId;
-        // arrAroundId = new Array();             
-        // self = this;
-        // var leftRow = this.cells[i].y - 1; 
-        // var rightRow = this.cells[i].y + 1;
-        // var leftCol = this.cells[i].x - 1; 
-        // var rightCol = this.cells[i].x + 1; 
-        // arrAroundId = [];
-
-        
-        // if(leftRow < 1) leftRow= 1;
-        // if(rightRow >= this.w) rightRow = this.w;    
-        // if(leftCol < 1) leftCol = 1;       
-        // if(rightCol >= this.h) rightCol = this.h;
-
-        // for(var m = leftRow; m <= rightRow; m++){
-        //     for(var j = leftCol; j <= rightCol; j++){
-        //         var numId = m.toString() + "_" + j.toString();
-        //         var s = $("#"+numId+"").attr("name");
-
-        //         arrAroundId.push(s);
-                                                    
-        //     }
-        // } 
-        //     return arrAroundId;            
     },
+       
 
-   turnArround: function(i){
+    turnArround: function(i){
        self = Game;
+
        if (arrTesting.length > 0) {
         arrTesting.splice(0, 1);
        }
        
        var currentBlank = self.idRound(i);
+
        for(var j = 0; j < currentBlank.length; j++) {
            if ($.inArray(currentBlank[j], arrBlank) < 0){
                arrBlank.push(currentBlank[j]);
@@ -167,21 +156,12 @@ var Game = {
            if(this.cells[currentBlank[n]].count == 0 && this.cells[currentBlank[n]].opened == false){
                $("[name= "+currentBlank[n]+"]").addClass('blank');
                $("[name= "+currentBlank[n]+"]").find("span").addClass("count");
-
-            //    id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
-            //    $("#"+id+"").addClass('blank');
-            //    $("#"+id+"").find("span").addClass("count");
                this.cells[currentBlank[n]].opened = true;
                arrTesting.push(currentBlank[n]);
            }
            if(this.cells[currentBlank[n]].count != 0 && this.cells[currentBlank[n]].opened == false){
-               
                $("[name= "+currentBlank[n]+"]").addClass('blank');
                $("[name= "+currentBlank[n]+"]").find("span").addClass("count");
-               
-            //    id = this.cells[currentBlank[n]].y+"_"+this.cells[currentBlank[n]].x;
-            //    $("#"+id+"").addClass('blank');
-            //    $("#"+id+"").find("span").addClass("count");
                this.cells[currentBlank[n]].opened = true;
            }
        }
@@ -233,9 +213,9 @@ var Game = {
         }       
          
         for (i=0; i< this.cells.length; i++){
-            s = this.cells[i].y+"_"+this.cells[i].x;
-            if (c = $("#"+s+"").text()> 0){
-                this.cells[i].count = parseInt($("#"+s+"").text());                 
+            
+            if (c = $("[name= "+i+"]").text()> 0){
+                this.cells[i].count = parseInt($("[name= "+i+"]").text());                 
             }
         }
 
@@ -321,7 +301,7 @@ var Game = {
                 var i = (x-1)+(y-1)*h;
                 bombs[i] = i;
                 num++;
-                this.cells.push(Cell.createNew(y, x, num, false, 0));           
+                this.cells.push(Cell.createNew(num, false, 0));           
                // console.log(this.cells); //显示类
             }
         } 
@@ -329,7 +309,6 @@ var Game = {
 
         var tds = this.table.find("td");
         for (var i = 0; i < this.cells.length; i++) {
-            $(tds[i]).attr('id', this.cells[i].y+"_"+this.cells[i].x);
             $(tds[i]).attr('name', this.cells[i].num)
         }
 
@@ -342,11 +321,12 @@ var Game = {
 
 
     gameReSet: function(){
-       $("td").removeClass("blank");
-       $("td").removeClass("flag");
-       $("td").removeClass("mine");
-       $("td span").removeClass("count");
-       $("td span").remove(); 
+
+        $("td").removeClass("blank");
+        $("td").removeClass("flag");
+        $("td").removeClass("mine");
+        $("td span").removeClass("count");
+        $("td span").remove(); 
         Game.table = null;
         Game.cells = null;
         Game.mine_count = 9;
@@ -354,7 +334,6 @@ var Game = {
         arrTesting = [];
         arrBlank = [];
         Game.timeID = 0;      
-       
         $("#gameTitle").replaceWith("<legend id =gameTitle>扫雷</legend>");  
 
         Game.init($('#mines'));
@@ -365,18 +344,16 @@ var Game = {
         document.getElementById("timetxt").value = this.time_count;
         this.time_count ++;
     },
-
-
-
 };
+//end
 
 
 $(document).ready(function() {
     $("#startbutton").click(function(){ 
-        Game.init($('#mines'));
-    })
-    $("#resetbutton").click(function(){ 
-        Game.gameReSet();
+        Game.init($('#mines'));   
+        $("#resetbutton").click(function(){ 
+            Game.gameReSet();
+        })
     })
 });
 
