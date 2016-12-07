@@ -29,11 +29,6 @@ function shuffle(a) {
     }
 }
 
-function sortNumber(a,b){
-    return a - b;
-}
-
-
 var Game = {
     table: null,
     cells: null,
@@ -90,10 +85,6 @@ var Game = {
         var arr2 = new Array();
         var arr3 = new Array();
 
-        arr1 = [];
-        arr2 = [];
-        arr3 = [];
-
         if(i % this.w == 0){
             
             arr1 = [ 
@@ -103,8 +94,7 @@ var Game = {
                 i+1,
                 i+this.w,
                 i+this.w+1
-                ].filter(function(x){return x>=0 && x < self.w * self.h}).sort(sortNumber);
-                arr1 = arr1.map(function (val) { return val.toString();})
+                ].filter(function(x){return x>=0 && x < self.w * self.h});
                 return arr1;
         }else 
         if(i % this.w == this.w - 1){
@@ -114,8 +104,7 @@ var Game = {
                 i-this.w,i-1,
                 i+this.w-1,
                 i+this.w,
-                ].filter(function(x){return x>=0 && x < self.w * self.h}).sort(sortNumber);
-                arr2 = arr2.map(function (val) { return val.toString();})
+                ].filter(function(x){return x>=0 && x < self.w * self.h});
                 return arr2;
 
         }else{
@@ -129,8 +118,7 @@ var Game = {
                 i-self.w-1, // up left
                 i+self.w-1, // down left
                 i+self.w+1 // down right
-                ].filter(function(x){return x>=0 && x < self.w * self.h}).sort(sortNumber);
-                arr3 = arr3.map(function (val) { return val.toString();})
+                ].filter(function(x){return x>=0 && x < self.w * self.h});
                 return arr3;
         }
 
@@ -263,23 +251,12 @@ var Game = {
             
         }
         
-         if(self.mine_count == 0 && self.win() == true){
+         if(self.mine_count == 0){
             $("#gameTitle").replaceWith("<legend id =gameTitle>你赢了</legend>");  
             clearInterval(self.timeID);
         }
         return false;
     },
-
-    
-    win: function () { 
-        for (var i = 0; i < this.cells.length; i++){
-            if (this.cells[i].opened == true){
-                return true;
-            }
-            return false;
-        }
-     },
-
 
     mouseOver: function(e){
         $("td").mouseover(function(){
@@ -320,7 +297,7 @@ var Game = {
     },
 
 
-    gameReSet: function(){
+    gameReset: function(){
         clearInterval(self.timeID);
         $("td").removeClass("blank");
         $("td").removeClass("flag");
@@ -352,7 +329,7 @@ $(document).ready(function() {
     $("#startbutton").click(function(){ 
         Game.init($('#mines'));   
         $("#resetbutton").click(function(){ 
-            Game.gameReSet();
+            Game.gameReset();
         })
     })
 });
